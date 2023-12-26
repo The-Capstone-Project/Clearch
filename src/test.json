@@ -1,0 +1,14 @@
+{
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "lorem ipsum "
+            }
+          ],
+          "role": "model"
+        }
+      }
+    ]
+  }
