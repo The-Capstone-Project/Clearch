@@ -33,7 +33,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // Gemini part
 
-        let apikey = dotenv::var("GEMIAI_API").unwrap();
+        let apikey = env!("GEMIAI_API");
         let client = reqwest::Client::new();
         let resp = client.post(format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={apikey}"))
     .header(header::CONTENT_TYPE, "application/json")
