@@ -7,9 +7,9 @@ use std::{collections::HashMap, vec};
 #[derive(Parser, Debug)]
 #[command(name = "Clearch")]
 #[command(author = "Advaith Narayanan <advaith@glitchy.systems>")]
-#[command(version = "1.0")]
-#[command(about = "Search using the command line", long_about = None)]
+#[command(about = "Search using the command line")]
 struct Gemini {
+    #[arg(short, long)]
     query: Option<String>
 }
 
@@ -18,8 +18,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
 
     let search = Gemini::parse();
-
-    print!("{:?}", search.query.as_deref());
 
     if let Some(query) = search.query.as_deref() {
         let mut map = HashMap::new();
