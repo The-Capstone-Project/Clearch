@@ -4,17 +4,19 @@ use dotenv::dotenv;
 use reqwest::{header, Client};
 use serde_json::{json, Value};
 // use std::io::{self, Read};
-use sys_info::{os_release, os_type};
+use sys_info::{linux_os_release, os_release, os_type};
 
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 #[command(name = "Clearch")]
 #[command(author = "Advaith Narayanan <advaith@glitchy.systems>")]
 #[command(about = "Search using the command line")]
 struct Gemini {
-    #[clap(required_unless_present_all = "query-script")]
-    query: Option<String>,
     
-    query_script: FileOrStdin<String>,
+    #[arg(short='q',long="specify")]
+    search_query: Option<String>,
+    
+    // #[arg(long="query",help = "Pass `-h` and you'll see me!")]
+    query: FileOrStdin<String>,
 }
 
 #[tokio::main]
@@ -22,9 +24,10 @@ async fn main() {
     dotenv().ok();
 
     println!(
-        "OS: {}  OS REL: {} ",
+        "OS: {}  OS REL: {} Linux: {} ",
         os_type().unwrap(),
-        os_release().unwrap()
+        os_release().unwrap(),
+        linux_os_release().unwrap().pretty_name()
     );
 
     let search = Gemini::parse();
@@ -37,40 +40,26 @@ async fn main() {
     // #[cfg(not(debug_assertions))]
     // if let apikey = env!("GEMIAI_API"){}
 
-    if let Some(query) = search.query.as_deref() {
+    if let Some(query) = search.search_query.as_deref() {
         println!("Searching for: {}", query);
         req(query, apikey, "").await.unwrap();
     } else {
-        // match search.query_script {
-        //     Some(z) => {
-        //         println!("Searching for: {}", z);
-        //         req(&z, apikey,format!("OS: {}  OS REL: {} ", os_type().unwrap(), os_release().unwrap()).as_str()).await.unwrap();
-        //     }
-        //     None => eprintln!("Failed to read from stdin"),
-        // }
-
-        // match search.query_script.contents() {
-        //     Ok(z) => {
-        //         println!("Searching for: {}", z);
-        //         req(&z, apikey,format!("OS: {}  OS REL: {} ", os_type().unwrap(), os_release().unwrap()).as_str()).await.unwrap();
-        //     }
-        //     Err(_) => eprintln!("Failed to read from stdin"),
-        // }
-
-        if let Ok(buffer) = search.query_script.contents() {
-            // let mut buffer = String::new();
-            // println!("{buffer}");
-            // io::stdin()
-            //     .read_to_string(&mut buffer)
-            //     .expect("Failed to read from stdin");
-            // println!("Searching for: {}", buffer);
+        if let Ok(buffer) = search.query.contents() {
+            println!("{buffer}");
+            let prompt: Vec<String> = include_str!("prompt").split("\n").map(|s| s.to_string()).collect();
+            println!("lenth of array {}",prompt.len());
+            for i in prompt{
+                println!("{}", i);
+            }
             req(
                 &buffer,
                 apikey,
                 format!(
-                    "OS: {}  OS REL: {} Using this information return the syntax for proper bash script without any markdown or html just raw bash script",
+                    "OS: {}  kernal version: {}, 
+                    {}",
                     os_type().unwrap(),
-                    os_release().unwrap()
+                    os_release().unwrap(),
+                    linux_os_release().unwrap().pretty_name()
                 )
                 .as_str(),
             )
