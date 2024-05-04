@@ -1,10 +1,12 @@
+mod llms;
+mod traits;
+use crate::llms::gemini::GeminiModel;
+use crate::traits::LLMRequest;
 use clap::Parser;
 use clap_stdin::FileOrStdin;
 use dotenv::dotenv;
-use reqwest::{header, Client};
-use serde_json::{json, Value};
-// use std::io::{self, Read};
 use sys_info::{linux_os_release, os_release, os_type};
+
 
 #[derive(Parser)]
 #[command(name = "Clearch")]
@@ -36,13 +38,12 @@ async fn main() {
         Ok(apikey) => apikey,
         Err(e) => panic!("API not found: {}", e),
     };
-
-    // #[cfg(not(debug_assertions))]
-    // if let apikey = env!("GEMIAI_API"){}
+    
+    let gemini_model = GeminiModel::new(apikey);
 
     if let Some(query) = search.search_query.as_deref() {
         println!("Searching for: {}", query);
-        req(query, apikey, "").await.unwrap();
+        gemini_model.req(query, "").await.unwrap();
     } else {
         if let Ok(buffer) = search.query.contents() {
             println!("{buffer}");
@@ -51,9 +52,8 @@ async fn main() {
             for i in prompt{
                 println!("{}", i);
             }
-            req(
+            gemini_model.req(
                 &buffer,
-                apikey,
                 format!(
                     "OS: {}  kernal version: {}, 
                     {}",
@@ -69,34 +69,4 @@ async fn main() {
     }
 }
 
-async fn req(query: &str, apikey: String, fine: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let map = json!({
-    "contents": [
-        {
-            "parts": [
-                {
-                    "text": format!("{} {}", query, fine)
-                }
-                ]
-        }
-        ]
-    });
 
-    let client = Client::new();
-    let resp = client.post(format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={}",apikey))
-    .header(header::CONTENT_TYPE, "application/json")
-    .json(&map)
-    .send()
-    .await?;
-
-    let json: Value = resp.json().await?;
-
-    if let Some(candidate) = json["candidates"].get(0) {
-        if let Some(content) = candidate["content"]["parts"].get(0) {
-            if let Some(text) = content["text"].as_str() {
-                println!("{}", text);
-            }
-        }
-    }
-    Ok(())
-}
