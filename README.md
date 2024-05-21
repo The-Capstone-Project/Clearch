@@ -4,7 +4,7 @@ A command line search engine based on AI models like gemini (more soon to come),
 
 ## Project Structure
 
-```
+```text
 .
 ├── .gitignore
 ├── .vscode/
@@ -27,12 +27,6 @@ A command line search engine based on AI models like gemini (more soon to come),
 ```
 
 ## How it Works
-
-Deciding which workspace information to collect
-
-Collecting workspace information
-
-Filtering to most relevant information
 
 The Clearch program is a command-line search engine that uses AI models for its operation. It's written in Rust, and the main logic of the project is located in the ` src ` directory.
 
@@ -70,5 +64,43 @@ python3 packager.py
 ```
 
 This will build the project and create a .deb file in the current directory.
+
+### PKGBUILD
+
+The `PKGBUILD` script is used to build and package the Clearch project for Arch Linux. Here are the steps it performs:
+
+1. Defines the package metadata, including the package name (`clearch`), version (`0.1.0`), architecture (`x86_64`), URL, license (`MIT`), and dependencies (`glibc`).
+2. Specifies the build dependencies (`rust`, `cargo`).
+3. Defines the source file URL.
+4. Specifies the build command (`cargo build --release --locked --all-features --target-dir=target`).
+5. Defines the package function, which installs the `clearch` executable, the `LICENSE` file, and the `README.md` file to the appropriate directories in the package.
+
+Here is the content of the `PKGBUILD` file:
+
+```sh
+# Maintainer: Eric TK <ericatkusa@gmail.com>
+pkgname=clearch
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="A simple CLI tool written in Rust"
+arch=('x86_64')
+url="https://github.com/Zane-Dev14/ClearchOnlyTar"
+license=('MIT')
+depends=('glibc')
+makedepends=('rust' 'cargo')
+source=("https://github.com/Zane-Dev14/ClearchOnlyTar/raw/main/clearch-cli-0.1.0.tar.gz")
+sha256sums=('SKIP')
+build() {
+    cd "$srcdir"
+    cargo build --release --locked --all-features --target-dir=target
+}
+package() {
+    install -Dm755 "$srcdir/target/release/clearch" "$pkgdir/usr/bin/clearch"
+    install -Dm644 "$srcdir/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    install -Dm644 "$srcdir/README.md" "$pkgdir/usr/share/doc/$pkgname/README.md"
+}
+```
+
+This will build the project and create a package for Arch Linux.
 
 ---
