@@ -1,0 +1,17 @@
+name: Release builder
+run-name: Build for ${{ github.ref_name }} ${{ github.ref_type }} 
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    deb-package:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Build deb package
+              run: |
+                    python package.py
+            
