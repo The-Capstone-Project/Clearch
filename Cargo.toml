@@ -2,7 +2,8 @@
 name = "clearch"
 version = "0.1.0"
 edition = "2021"
-
+description = "Clearch is a powerful command line tool that combines web search and package management using the Gemini API."
+authors = ["Advaith Narayanan <advaith@glitchy.systems>","The Capstone Project Team MITS"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 
