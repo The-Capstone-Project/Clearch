@@ -28,9 +28,9 @@ A command line search engine based on AI models like gemini (more soon to come),
 
 ## Description of working
 
-Clearch is a command-line search engine that uses AI models for its operation. It's written in Rust, and the main logic of the project is located in the ` src ` directory.
+Clearch is a command-line search engine that uses AI models for its operation. It's written in Rust, with the main logic of the project located in the ` src ` directory.
 
-The ` src/llms ` directory contains the implementations of different AI models that the search engine uses. Each file in this directory corresponds to a specific AI model. For example, ` gemini.rs ` contains the implementation for the Gemini model, ` claude.rs ` for the Claude model, and so on. These models are structured as Rust modules and are imported in ` src/llms/mod.rs `.
+The ` src/llms ` directory contains the implementation of different AI models that Clearch uses. Each file in this directory corresponds to a specific AI model. For example, ` gemini.rs ` contains the implementation for the Gemini model, ` claude.rs ` for the Claude model, and so on. These models are structured as Rust modules and are imported in ` src/llms/mod.rs `.
 
 The `LLMRequest` trait defined in ``src/traits.rs``is implemented by each of these models. This trait defines a common interface that all models must adhere to, ensuring that they can be used interchangeably in the main program. For example, the `ClaudeModel` struct in ``src/llms/claude.rs``implements the `LLMRequest` trait.
 
