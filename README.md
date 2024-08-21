@@ -35,9 +35,9 @@ Clearch is a command-line search engine that leverages AI models such as Gemini,
 └── test.py 
 ``` 
 
-## Description of Functionality 📝 
+## Description 📝 
 
-Clearch is designed as a command-line search engine utilizing various AI models. The main logic of the project resides in the `src` directory, while specific implementations of AI models are found in the `src/llms` directory. Each file in `src/llms` corresponds to a specific AI model: 
+Clearch is a command-line search engine utilizing various AI models. The main logic of the project resides in the `src` directory, while specific implementations of the AI models are found in the `src/llms` directory. Each file in `src/llms` corresponds to a specific AI model: 
 
 - **gemini.rs**: Implements the Gemini model. 
 - **claude.rs**: Implements the Claude model. 
@@ -65,7 +65,7 @@ The `clap` library is used in `src/main.rs` for handling command-line inputs. Th
 
 The `packager.py` script automates the build and packaging process of the Rust project. It performs the following steps: 
 
-1. Changes to the Rust project directory. 
+1. Implements changes in the Rust project directory. 
 2. Builds the Rust project using `cargo build --release`. 
 3. Installs `cargo-deb` if it is not already installed. 
 4. Packages the executable into a `.deb` file using `cargo deb`. 
@@ -82,7 +82,7 @@ This command compiles the project and produces a `.deb` file in the current dire
 
 ### PKGBUILD 💽 
 
-The `PKGBUILD` script is tailored for building and packaging the Clearch project for Arch Linux. Here’s a summary of its operations: 
+The `PKGBUILD` script is tailored for building and packaging Clearch for Arch Linux. Here’s a summary of its operation: 
 
 1. Defines package metadata: name (`clearch`), version (`0.1.0`), architecture (`x86_64`), URL, license (`MIT`), and dependencies (`glibc`). 
 2. Specifies build dependencies: `rust`, `cargo`. 
@@ -90,7 +90,7 @@ The `PKGBUILD` script is tailored for building and packaging the Clearch project
 4. Specifies the build command: `cargo build --release --locked --all-features --target-dir=target`. 
 5. Defines the package function to install the `clearch` executable, the `LICENSE` file, and the `README.md` to their respective directories in the package. 
 
-Below is the content of the `PKGBUILD` file: 
+The `PKGBUILD` file is as given below: 
 
 ```sh 
 # Maintainer: Eric TK <ericatkusa@gmail.com> 
@@ -121,5 +121,3 @@ package() {
 This script will effectively build the project and generate a package for Arch Linux. 🛠️ 
 
 ---
-
-For further information and contribution guidelines, please refer to the project's GitHub repository. 🌐
