@@ -26,7 +26,7 @@ Clearch is a command-line search engine that leverages AI models such as Gemini,
 └── test.py
 ```
 
-## Description of Functionality 📝
+## Description 📝
 
 Clearch is designed as a command-line search engine utilizing various AI models. The main logic of the project resides in the `src` directory, while specific implementations of AI models are found in the `src/llms` directory. Each file in `src/llms` corresponds to a specific AI model:
 
@@ -113,4 +113,3 @@ This script will effectively build the project and generate a package for Arch L
 
 ---
 
-For further information and contribution guidelines, please refer to the project's GitHub repository. 🌐
