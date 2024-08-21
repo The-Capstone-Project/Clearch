@@ -4,7 +4,7 @@ Clearch is a command-line search engine that leverages AI models such as Gemini,
 
 ## Table of Contents 📚
 - -> [Project Structure 📂](#project-structure-)
-- -> [Description of Functionality 📝](#description-of-functionality-)
+- -> [Description of Functionality 📝](#description)
 - -> [Command-Line Interface 💻](#command-line-interface-)
 - -> [Relevant Files and Symbols 📂](#relevant-files-and-symbols-)
 - -> [Packaging Scripts 📦](#packaging-scripts-)
