@@ -26,9 +26,9 @@ A command line search engine based on AI models like gemini (more soon to come),
 └── test.py
 ```
 
-## How it Works
+## Description of working
 
-The Clearch program is a command-line search engine that uses AI models for its operation. It's written in Rust, and the main logic of the project is located in the ` src ` directory.
+Clearch is a command-line search engine that uses AI models for its operation. It's written in Rust, and the main logic of the project is located in the ` src ` directory.
 
 The ` src/llms ` directory contains the implementations of different AI models that the search engine uses. Each file in this directory corresponds to a specific AI model. For example, ` gemini.rs ` contains the implementation for the Gemini model, ` claude.rs ` for the Claude model, and so on. These models are structured as Rust modules and are imported in ` src/llms/mod.rs `.
 
