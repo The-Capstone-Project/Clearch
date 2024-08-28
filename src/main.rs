@@ -5,7 +5,7 @@ use crate::traits::LLMRequest;
 use clap::Parser;
 use clap_stdin::FileOrStdin;
 use dotenv::dotenv;
-use sys_info::{linux_os_release, os_release, os_type};
+use sys_info::{os_release, os_type};
 
 
 #[derive(Parser)]
@@ -26,10 +26,9 @@ async fn main() {
     dotenv().ok();
 
     println!(
-        "OS: {}  OS REL: {} Linux: {} ",
+        "OS: {}  OS REL: {} ",
         os_type().unwrap(),
         os_release().unwrap(),
-        linux_os_release().unwrap().pretty_name()
     );
 
     let search = Gemini::parse();
@@ -55,11 +54,10 @@ async fn main() {
             gemini_model.req(
                 &buffer,
                 format!(
-                    "OS: {}  kernal version: {}, 
-                    {}",
+                    "OS: {}  kernal version: {} use the information and the query provided in the promt to answer as correctly as possible if unsure do not answer but reply the model is unsure about the answer",
                     os_type().unwrap(),
                     os_release().unwrap(),
-                    linux_os_release().unwrap().pretty_name()
+                
                 )
                 .as_str(),
             )
