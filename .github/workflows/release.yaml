@@ -19,6 +19,10 @@ jobs:
           toolchain: stable
           target: x86_64-unknown-linux-gnu  # Default target for Linux
 
+      - name: Run Python script
+        run: |
+          python3 script.py  # Replace with your Python script that prepares the build if needed
+
       - name: Build Rust project for Linux
         run: cargo build --release
 
@@ -27,11 +31,23 @@ jobs:
           mkdir -p bin
           cp target/release/clearch ./bin/  # Binary name is clearch
 
-      - name: Build Debian Package (optional)
+      - name: Prepare Debian Package
         run: |
+          # Extract version from the tag and format it for Debian
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          echo "Tag name: $TAG_NAME"
+          VERSION=$(echo "$TAG_NAME" | sed 's/^v//' | sed 's/[^0-9.]//g')
+          echo "Version: $VERSION"
+          
+          # Ensure the version number is valid
+          if [[ ! "$VERSION" =~ ^[0-9]+ ]]; then
+            echo "Invalid version number. Exiting."
+            exit 1
+          fi
+
           mkdir -p debian/DEBIAN
           echo "Package: clearch" > debian/DEBIAN/control
-          echo "Version: ${{ github.ref_name }}" >> debian/DEBIAN/control
+          echo "Version: $VERSION" >> debian/DEBIAN/control
           echo "Section: base" >> debian/DEBIAN/control
           echo "Priority: optional" >> debian/DEBIAN/control
           echo "Architecture: amd64" >> debian/DEBIAN/control
@@ -40,7 +56,8 @@ jobs:
           echo "Description: Clearch combines web search and package management." >> debian/DEBIAN/control
           mkdir -p debian/usr/bin
           cp target/release/clearch debian/usr/bin/
-          dpkg-deb --build debian clearch_${{ github.ref_name }}_amd64.deb
+          dpkg-deb --build debian clearch_${VERSION}_amd64.deb
+          echo "Debian package created successfully."
 
       - name: Create GitHub release
         id: create_release
@@ -63,12 +80,12 @@ jobs:
           asset_name: clearch-linux-x86_64
           asset_content_type: application/octet-stream
 
-      - name: Upload Debian package (optional)
+      - name: Upload Debian package
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./clearch_${{ github.ref_name }}_amd64.deb
-          asset_name: clearch_${{ github.ref_name }}_amd64.deb
+          asset_path: ./clearch_${VERSION}_amd64.deb
+          asset_name: clearch_${VERSION}_amd64.deb
           asset_content_type: application/vnd.debian.binary-package
