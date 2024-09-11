@@ -13,8 +13,9 @@ def package_executable_to_deb(rust_project_path):
         return
 
     #install cargo-deb if not installed
+
     try:
-        subprocess.run(["cargo", "install", "cargo-deb"], check=True)
+        subprocess.run(["cargo", "install", "cargo-deb" ,"--force"], check=True)
     except subprocess.CalledProcessError:
         print("cargo-deb installation failed")
         return

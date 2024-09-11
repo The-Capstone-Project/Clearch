@@ -3,12 +3,10 @@ name = "clearch"
 version = "0.1.0"
 edition = "2021"
 description = "Clearch is a powerful command line tool that combines web search and package management using the Gemini API."
-authors = ["Advaith Narayanan <advaith@glitchy.systems>","The Capstone Project Team MITS"]
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-
-[profile.release]
-panic = "abort"
+authors = ["Advaith Narayanan <advaith@glitchy.systems>", "The Capstone Project Team MITS"]
+license = "MIT"
+repository = "https://github.com/The-Capstone-Project/Clearch"
+documentation = "https://github.com/The-Capstone-Project/Clearch"
 
 [dependencies]
 dotenv = "0.15.0"
@@ -18,3 +16,20 @@ tokio = { version = "1.35.1", features = ["full"] }
 clap = { version = "4.4.11", features = ["derive"] }
 sys-info = "0.9.1"
 clap-stdin = "0.4.0"
+
+[dev-dependencies]
+cargo-deb = "2.6.0"
+
+[profile.release]
+panic = "abort"
+
+[package.metadata.deb]
+maintainer = "Advaith Narayanan <advaith@glitchy.systems>"
+description = "Clearch is a powerful command line tool that combines web search and package management using the Gemini API."
+homepage = "https://github.com/The-Capstone-Project/Clearch/"
+license-file = "LICENSE"
+depends = "libc6, libssl-dev"
+replaces = "clearch"
+assets = [
+    ["target/release/clearch", "usr/bin"],  # This line will place the built binary in /usr/bin
+]

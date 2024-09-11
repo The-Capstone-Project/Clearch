@@ -1,17 +1,74 @@
-name: Release builder
-run-name: Build for ${{ github.ref_name }} ${{ github.ref_type }} 
+name: Build and Release Rust Binary
 
 on:
-    release:
-        types: [published]
+  push:
+    tags:
+      - 'v*'  # Runs on version tags like v1.0, v2.1, etc.
 
 jobs:
-    deb-package:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            - name: Build deb package
-              run: |
-                    python packager.py
-            
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-unknown-linux-gnu  # Default target for Linux
+
+      - name: Build Rust project for Linux
+        run: cargo build --release
+
+      - name: Prepare Linux binaries
+        run: |
+          mkdir -p bin
+          cp target/release/clearch ./bin/  # Binary name is clearch
+
+      - name: Build Debian Package (optional)
+        run: |
+          mkdir -p debian/DEBIAN
+          echo "Package: clearch" > debian/DEBIAN/control
+          echo "Version: ${{ github.ref_name }}" >> debian/DEBIAN/control
+          echo "Section: base" >> debian/DEBIAN/control
+          echo "Priority: optional" >> debian/DEBIAN/control
+          echo "Architecture: amd64" >> debian/DEBIAN/control
+          echo "Depends: libc6, libssl-dev" >> debian/DEBIAN/control
+          echo "Maintainer: Advaith Narayanan <advaith@glitchy.systems>" >> debian/DEBIAN/control
+          echo "Description: Clearch combines web search and package management." >> debian/DEBIAN/control
+          mkdir -p debian/usr/bin
+          cp target/release/clearch debian/usr/bin/
+          dpkg-deb --build debian clearch_${{ github.ref_name }}_amd64.deb
+
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Linux executable
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/clearch
+          asset_name: clearch-linux-x86_64
+          asset_content_type: application/octet-stream
+
+      - name: Upload Debian package (optional)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./clearch_${{ github.ref_name }}_amd64.deb
+          asset_name: clearch_${{ github.ref_name }}_amd64.deb
+          asset_content_type: application/vnd.debian.binary-package
