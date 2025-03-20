@@ -1,3 +1,4 @@
 pub mod gemini;
-// pub mod gpt;
 // pub mod claude;
+// pub mod gpt;
+// pub mod groq;
