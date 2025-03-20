@@ -3,22 +3,24 @@ mod traits;
 use crate::llms::gemini::GeminiModel;
 use crate::traits::LLMRequest;
 use clap::Parser;
-use clap_stdin::FileOrStdin;
+use clap::CommandFactory; // Add this import for Gemini::command()
 use dotenv::dotenv;
 use sys_info::{os_release, os_type};
 
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 #[command(name = "Clearch")]
 #[command(author = "Advaith Narayanan <advaith@glitchy.systems>")]
 #[command(about = "Search using the command line")]
 struct Gemini {
-    
-    #[arg(short='q',long="specify")]
+    #[arg(short='q', long="specify", help = "Specify search query as a string")]
     search_query: Option<String>,
     
-    // #[arg(long="query",help = "Pass `-h` and you'll see me!")]
-    query: FileOrStdin<String>,
+    #[arg(long="std", help = "Read query from stdin (ignores any args)")]
+    use_stdin: bool,
+    
+    #[arg(trailing_var_arg = true, help = "Direct input without flags")]
+    args: Vec<String>,
 }
 
 #[tokio::main]
@@ -40,30 +42,34 @@ async fn main() {
     
     let gemini_model = GeminiModel::new(apikey);
 
-    if let Some(query) = search.search_query.as_deref() {
+    // If --std flag is provided, read from stdin (ignoring other args)
+    if search.use_stdin {
+        let mut buffer = String::new();
+        std::io::stdin().read_line(&mut buffer).expect("Failed to read from stdin");
+        
+        if !buffer.trim().is_empty() {
+            println!("Searching with input from stdin");
+            gemini_model.req(&buffer, "").await.unwrap();
+        } else {
+            println!("Empty input from stdin");
+            std::process::exit(1);
+        }
+    }
+    // If search_query is provided with -q/--specify flag, use that directly
+    else if let Some(query) = search.search_query.as_deref() {
         println!("Searching for: {}", query);
         gemini_model.req(query, "").await.unwrap();
-    } else {
-        if let Ok(buffer) = search.query.contents() {
-            println!("{buffer}");
-            let prompt: Vec<String> = include_str!("prompt").split("\n").map(|s| s.to_string()).collect();
-            println!("lenth of array {}",prompt.len());
-            for i in prompt{
-                println!("{}", i);
-            }
-            gemini_model.req(
-                &buffer,
-                format!(
-                    "OS: {}  kernal version: {} use the information and the query provided in the promt to answer as correctly as possible if unsure do not answer but reply the model is unsure about the answer",
-                    os_type().unwrap(),
-                    os_release().unwrap(),
-                
-                )
-                .as_str(),
-            )
-            .await
-            .unwrap();
-        }
+    }
+    // If direct args were provided without flags, use them as query
+    else if !search.args.is_empty() {
+        let query = search.args.join(" ");
+        println!("Searching for: {}", query);
+        gemini_model.req(&query, "").await.unwrap();
+    }
+    // If nothing provided, show help
+    else {
+        Gemini::command().print_help().unwrap();
+        std::process::exit(1);
     }
 }
 

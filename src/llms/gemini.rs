@@ -28,7 +28,7 @@ impl LLMRequest for GeminiModel {
         });
 
        
-        let resp = self.client.post(format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={}", self.api_key))
+        let resp = self.client.post(format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={}", self.api_key))
             .header(header::CONTENT_TYPE, "application/json")
             .json(&map)
             .send()
