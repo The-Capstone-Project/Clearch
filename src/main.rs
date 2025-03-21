@@ -1,5 +1,6 @@
 mod llms;
 mod traits;
+
 use crate::llms::gemini::GeminiModel;  
 use crate::traits::LLMRequest;
 use clap::CommandFactory; // Add this import for Gemini::command()
@@ -30,7 +31,7 @@ struct Clearch {
 async fn main() {
     dotenv().ok();
 
-    println!(
+    let os_info = format!(
         "OS: {}  OS REL: {} ",
         os_type().unwrap(),
         os_release().unwrap(),
@@ -48,9 +49,10 @@ async fn main() {
     // If --std flag is provided, read from stdin (ignoring other args)
     if search.use_stdin {
         let mut buffer = String::new();
-        std::io::stdin()
-            .read_line(&mut buffer)
-            .expect("Failed to read from stdin");
+        for line in std::io::stdin().lines() {
+            buffer.push_str(&line.expect("Failed to read line from stdin"));
+            buffer.push('\n');
+        }
 
         if !buffer.trim().is_empty() {
             println!("Searching with input from stdin");
@@ -70,6 +72,8 @@ async fn main() {
                     })
                 }
             };
+            let prompt = format!("OS INFO: {} \n {}", os_info,prompt);
+            // println!("{}",prompt);
             gemini_model.req(&buffer, prompt.as_str()).await.unwrap();
         } else {
             println!("Empty input from stdin");

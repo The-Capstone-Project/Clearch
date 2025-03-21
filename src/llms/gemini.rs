@@ -34,16 +34,10 @@ impl LLMRequest for GeminiModel {
                           "text": fine
                       }
                   ]
-              },
-              "generationConfig": {
-                "temperature": 1,
-                "topK": 40,
-                "topP": 0.95,
-                "maxOutputTokens": 8192,
-                "responseMimeType": "text/plain"
-            }   
+              }
           });
 
+          println!("Map {}\n\n",map);
         let resp = self.client.post(format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={}", self.api_key))
         .header(header::CONTENT_TYPE, "application/json")
         .json(&map)
