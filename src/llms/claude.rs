@@ -2,7 +2,7 @@ use std::error::Error;
 use reqwest::Client;
 use crate::traits::LLMRequest;
 
-struct ClaudeModel {
+pub struct ClaudeModel {
     client: Client,
     api_key: String,
 }

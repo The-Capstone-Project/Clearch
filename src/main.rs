@@ -11,7 +11,7 @@ use sys_info::{os_release, os_type};
 #[command(name = "Clearch")]
 #[command(author = "Advaith Narayanan <advaith@glitchy.systems>")]
 #[command(about = "Search using the command line")]
-struct Gemini {
+struct Clearch {
     #[arg(
         short = 'q',
         long = "specify",
@@ -36,9 +36,9 @@ async fn main() {
         os_release().unwrap(),
     );
 
-    let search = Gemini::parse();
+    let search = Clearch::parse();
 
-    let apikey = match std::env::var("GEMIAI_API") {
+    let apikey = match std::env::var("AI_API") {
         Ok(apikey) => apikey,
         Err(e) => panic!("API not found: {}", e),
     };
@@ -121,7 +121,7 @@ async fn main() {
     }
     // If nothing provided, show help
     else {
-        Gemini::command().print_help().unwrap();
+        Clearch::command().print_help().unwrap();
         std::process::exit(1);
     }
 }
