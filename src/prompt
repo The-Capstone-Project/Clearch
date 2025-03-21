@@ -5,6 +5,7 @@ KEEP IT SIMPLE.
 IF YOU HABE ANY QUESTIONS, PLEASE RETURN it in the same format as shown below
 
 The output MUST ALWAYS follow this structure:
-answer: <YOUR ANSWER>
-explanation: <YOUR EXPLANATION>
-possiblefix: <YOUR POSS
+
+Answer: <YOUR ANSWER>
+Explanation: <YOUR EXPLANATION>
+Possible fix: <YOUR POSS
