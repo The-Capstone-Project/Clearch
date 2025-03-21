@@ -1,6 +1,6 @@
 mod llms;
 mod traits;
-use crate::llms::gemini::GeminiModel;
+use crate::llms::gemini::GeminiModel;  
 use crate::traits::LLMRequest;
 use clap::CommandFactory; // Add this import for Gemini::command()
 use clap::Parser;
