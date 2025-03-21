@@ -90,7 +90,7 @@ async fn main() {
         }
 
         if !buffer.trim().is_empty() {
-            println!("Searching with input from stdin");
+            println!("Searching with input from stdin\n Thinking.");
             let prompt = get_prompt(&os_info, &os_scraper_output);
             gemini_model.req(&buffer, &prompt).await.unwrap();
         } else {
@@ -101,14 +101,14 @@ async fn main() {
     // If search_query is provided with -q/--specify flag, use that directly
     else if let Some(query) = search.search_query.as_deref() {
         let prompt = get_prompt(&os_info, &os_scraper_output);
-        println!("Searching for: {}", query);
+        println!("Searching for: {}\n Thinking.", query);
         gemini_model.req(query, &prompt).await.unwrap();
     }
     // If direct args were provided without flags, use them as query
     else if !search.args.is_empty() {
         let query = search.args.join(" ");
         let prompt = get_prompt(&os_info, &os_scraper_output);
-        println!("Searching for: {}", query);
+        println!("Searching for: {}\n Thinking.", query);
         gemini_model.req(&query, &prompt).await.unwrap();
     }
     // If nothing provided, show help
