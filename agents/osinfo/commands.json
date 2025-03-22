@@ -1,0 +1,60 @@
+{
+    "commands": [
+        {
+            "description": "Distribution Info",
+            "command": "lsb_release -a || cat /etc/os-release"
+        },
+        {
+            "description": "Kernel Version",
+            "command": "uname -r"
+        },
+        {
+            "description": "Full Kernel Information",
+            "command": "uname -a"
+        },
+        {
+            "description": "GRUB Settings",
+            "command": "cat /etc/default/grub"
+        },
+        {
+            "description": "CPU Information",
+            "command": "lscpu"
+        },
+        {
+            "description": "Memory Information",
+            "command": "free -h"
+        },
+        {
+            "description": "Disk Usage",
+            "command": "df -h"
+        },
+        {
+            "description": "Network Interfaces",
+            "command": "ip a"
+        },
+        {
+            "description": "Routing Table",
+            "command": "ip route"
+        },
+        {
+            "description": "System Information",
+            "command": "hostnamectl"
+        },
+        {
+            "description": "File Systems",
+            "command": "mount | column -t"
+        },
+        {
+            "description": "Running Processes",
+            "command": "ps aux"
+        },
+        {
+            "description": "Active Services",
+            "command": "systemctl list-units --type=service --state=running"
+        },
+        {
+            "description": "Logged In Users",
+            "command": "who"
+        }
+    ]
+}

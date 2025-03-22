@@ -17,28 +17,27 @@ impl LLMRequest for GeminiModel {
     }
     async fn req(&self, query: &str, fine: &str) -> Result<String, Box<dyn Error>> {
         let map = json!({
-              "contents": [
-                  {
-                      "role": "user",
-                      "parts": [
-                          {
-                              "text": format!("{}", query)
-                          }
-                      ]
-                  }
-              ],
-              "systemInstruction": {
-                  "role": "user",
-                  "parts": [
-                      {
-                          "text": fine
-                      }
-                  ]
-              }
-          });
+            "contents": [
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "text": format!("{}", query)
+                        }
+                    ]
+                }
+            ],
+            "systemInstruction": {
+                "role": "user",
+                "parts": [
+                    {
+                        "text": fine
+                    }
+                ]
+            }
+        });
 
-
-        let resp = self.client.post(format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={}", self.api_key))
+        let resp = self.client.post(format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={}", self.api_key))
         .header(header::CONTENT_TYPE, "application/json")
         .json(&map)
         .send()
@@ -51,7 +50,7 @@ impl LLMRequest for GeminiModel {
         if let Some(candidate) = json["candidates"].get(0) {
             if let Some(content) = candidate["content"]["parts"].get(0) {
                 if let Some(text) = content["text"].as_str() {
-                    println!("{}",text.to_string());
+                    println!("{}", text.to_string());
                     return Ok(text.to_string());
                 }
             }
